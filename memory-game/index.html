@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Найди пару</title>
+    <style>
+        /* Основные стили */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ffcc00, #ff6600); /* Жёлто-оранжевый градиент */
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: "Comic Sans MS", cursive, sans-serif; /* Шрифт Comic Sans MS */
+            font-size: 48px; /* Крупный шрифт */
+            font-weight: bold; /* Жирный шрифт */
+            color: #ffff00; /* Ярко-жёлтый цвет */
+            text-align: center; /* Выравнивание по центру */
+            margin-bottom: 20px; /* Отступ снизу */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Тень текста */
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(6, 100px); /* 6 карточек в ряду для компьютеров */
+            grid-gap: 10px;
+            max-width: 90%;
+            margin: 0 auto;
+        }
+
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; /* Белый цвет для карточек */
+            border-radius: 15px; /* Закруглённые углы */
+            cursor: pointer;
+            perspective: 1000px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card .front,
+        .card .back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            border-radius: 15px; /* Закруглённые углы */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .card .front {
+            background-color: #ff8c00; /* Тёмно-оранжевый */
+            transform: rotateY(180deg);
+            background-size: cover;
+        }
+
+        .card .back {
+            background: linear-gradient(135deg, #ff4500, #ff8c00); /* Градиент для рубашки */
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Анимации */
+        @keyframes flip {
+            0% { transform: rotateY(0); }
+            50% { transform: rotateY(90deg); }
+            100% { transform: rotateY(180deg); }
+        }
+
+        .card.flipped {
+            animation: flip 0.6s ease;
+        }
+
+        /* Адаптация для мобильных устройств */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 36px; /* Уменьшаем шрифт для мобильных */
+            }
+
+            .game-board {
+                grid-template-columns: repeat(3, 1fr); /* 3 колонки на мобильных */
+                grid-gap: 8px;
+            }
+
+            .card {
+                border-radius: 10px; /* Меньше закругление на мобильных */
+            }
+
+            .card .front,
+            .card .back {
+                font-size: 18px; /* Меньше текст на мобильных */
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Найди пару</h1>
+    <div class="game-board" id="game-board">
+        <!-- Карточки будут добавлены с помощью JavaScript -->
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const gameBoard = document.getElementById("game-board");
+            const cardImages = [
+                "images1/beagle6.jpg", "images1/chihuahua6.jpg", "images1/corgi6.jpg",
+                "images1/dachshund6.jpg", "images1/french-bulldog6.jpg", "images1/german-shepherd6.jpg",
+                "images1/jack-russell6.jpg", "images1/labrador6.jpg", "images1/pomeranian6.jpg",
+                "images1/poodle6.jpg", "images1/pug6.jpg", "images1/yorkshire-terrier6.jpg"
+            ];
+
+            let cards = [];
+            let flippedCards = [];
+            let matchedCards = [];
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            function createCard(image) {
+                const card = document.createElement("div");
+                card.classList.add("card");
+
+                const front = document.createElement("div");
+                front.classList.add("front");
+                front.style.backgroundImage = `url(${image})`;
+                front.style.backgroundSize = "cover";
+
+                const back = document.createElement("div");
+                back.classList.add("back");
+
+                card.appendChild(front);
+                card.appendChild(back);
+
+                card.addEventListener("click", () => flipCard(card));
+
+                return card;
+            }
+
+            function flipCard(card) {
+                if (flippedCards.length < 2 && !card.classList.contains("flipped")) {
+                    card.classList.add("flipped");
+                    flippedCards.push(card);
+
+                    if (flippedCards.length === 2) {
+                        checkForMatch();
+                    }
+                }
+            }
+
+            function checkForMatch() {
+                const [card1, card2] = flippedCards;
+                const image1 = card1.querySelector(".front").style.backgroundImage;
+                const image2 = card2.querySelector(".front").style.backgroundImage;
+
+                if (image1 === image2) {
+                    matchedCards.push(card1, card2);
+                    flippedCards = [];
+
+                    if (matchedCards.length === cards.length) {
+                        setTimeout(resetGame, 1000);
+                    }
+                } else {
+                    setTimeout(() => {
+                        card1.classList.remove("flipped");
+                        card2.classList.remove("flipped");
+                        flippedCards = [];
+                    }, 1000);
+                }
+            }
+
+            function resetGame() {
+                matchedCards = [];
+                flippedCards = [];
+                shuffleArray(cardImages);
+                cards.forEach((card, index) => {
+                    card.classList.remove("flipped");
+                    card.querySelector(".front").style.backgroundImage = `url(${cardImages[index]})`;
+                });
+            }
+
+            function initGame() {
+                const doubledImages = [...cardImages, ...cardImages]; // Создаём пары
+                shuffleArray(doubledImages);
+
+                doubledImages.forEach(image => {
+                    const card = createCard(image);
+                    cards.push(card);
+                    gameBoard.appendChild(card);
+                });
+            }
+
+            initGame();
+        });
+    </script>
+</body>
+</html>
