@@ -30,7 +30,7 @@
 
         .game-board {
             display: grid;
-            grid-template-columns: repeat(6, 100px); /* 6 карточек в ряду для компьютеров */
+            grid-template-columns: repeat(8, 100px); /* 8 колонок для компьютеров */
             grid-gap: 10px;
             max-width: 90%;
             margin: 0 auto;
@@ -100,11 +100,13 @@
             }
 
             .game-board {
-                grid-template-columns: repeat(3, 1fr); /* 3 колонки на мобильных */
+                grid-template-columns: repeat(4, 1fr); /* 4 колонки на мобильных */
                 grid-gap: 8px;
             }
 
             .card {
+                width: 80px; /* Уменьшаем размер карточек */
+                height: 80px;
                 border-radius: 10px; /* Меньше закругление на мобильных */
             }
 
@@ -128,7 +130,11 @@
                 "images1/beagle6.jpg", "images1/chihuahua6.jpg", "images1/corgi6.jpg",
                 "images1/dachshund6.jpg", "images1/french-bulldog6.jpg", "images1/german-shepherd6.jpg",
                 "images1/jack-russell6.jpg", "images1/labrador6.jpg", "images1/pomeranian6.jpg",
-                "images1/poodle6.jpg", "images1/pug6.jpg", "images1/yorkshire-terrier6.jpg"
+                "images1/poodle6.jpg", "images1/pug6.jpg", "images1/yorkshire-terrier6.jpg",
+                "images1/dalmatian6.jpg", "images1/papillon6.jpg", "images1/rottweiler6.jpg",
+                "images1/husky6.jpg", "images1/doberman6.jpg", "images1/bichon-frise6.jpg",
+                "images1/cocker-spaniel6.jpg", "images1/akita-inu6.jpg", "images1/cavalier-spaniel6.jpg",
+                "images1/chow-chow6.jpg", "images1/border-collie6.jpg", "images1/airedaleterrier6.jpg"
             ];
 
             let cards = [];
